@@ -1,0 +1,31 @@
+{
+  "name": "api-heroes-marvel-dc",
+  "version": "1.0.0",
+  "description": "api-heroes-marvel-dc",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha src/tests/*.js",
+    "watch": "mocha --timeout 10000 src/tests/*.js -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kelsonthony/api-heroes-marvel-dc.git"
+  },
+  "author": "@kelsonthony",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kelsonthony/api-heroes-marvel-dc/issues"
+  },
+  "homepage": "https://github.com/kelsonthony/api-heroes-marvel-dc#readme",
+  "devDependencies": {
+    "mocha": "5.2.0",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "hapi": "^18.1.0",
+    "mongoose": "^5.12.3",
+    "pg": "8.5.1",
+    "pg-hstore": "2.3.3",
+    "sequelize": "6.5.0"
+  }
+}
