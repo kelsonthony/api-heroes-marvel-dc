@@ -1,4 +1,3 @@
-  
 const Icrud = require('./../interfaces/interfaceCrud')
 
 class ContextStrategy extends Icrud {
@@ -28,7 +27,7 @@ class ContextStrategy extends Icrud {
         return this._database.isConnected()
     }
     
-    connect() {
+    static connect() {
         return this._database.connect()
     }
 }

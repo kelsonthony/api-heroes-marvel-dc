@@ -7,7 +7,7 @@ class Postgres extends Icrud {
         super()
         this._connection = connection
         this._schema  = schema
-        //this._connect()
+        
     }
 
     async isConnected() {
@@ -20,21 +20,21 @@ class Postgres extends Icrud {
         }
     }
 
-    // static async defineModel(connection, schema) {
+    static async defineModel(connection, schema) {
 
-    //     const model = connection.define(
-    //         schema.name,
-    //         schema.schema,
-    //         schema.options
-    //     )
+        const model = connection.define(
+            schema.name,
+            schema.schema,
+            schema.options
+        )
 
-    //     await model.sync()
-    //     return model
-    // }
+        await model.sync()
+        return model
+    }
 
 
-    async connect() {
-        this._connection = new Sequelize(
+    static async connect() {
+       const connection = new Sequelize(
             'postgresheroesDCComics',
             'adminpostgres',
             'passwordpostgres',
@@ -45,35 +45,11 @@ class Postgres extends Icrud {
                 operatorsAliases: false
             }
         )
-        await this.defineModel()
-        //return connection
+   
+        return connection
     }
 
    
-    async defineModel() {
-
-        this._schema = this._connection.define('heroes', {
-            id: {
-                type: Sequelize.INTEGER,
-                required: true,
-                primaryKey: true,
-                autoIncrement: true
-            },
-            name: {
-                type: Sequelize.STRING,
-                required: true
-            },
-            power: {
-                type: Sequelize.STRING,
-                required: true
-            }
-        }, {
-            tableName: 'TB_HEROIS_DC',
-            freezeTableName: false,
-            timestamps: false
-        })
-        await this._schema.sync()
-    }
 
     async create(item) {
         //console.log('O item foi salvo em Postgres')

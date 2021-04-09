@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha src/tests/*.js",
-    "watch": "mocha --timeout 10000 src/tests/*.js -w"
+    "watch": "mocha src/tests/*.js -w"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "hapi": "^18.1.0",
-    "mongoose": "^5.12.3",
+    "mongoose": "5.11.15",
     "pg": "8.5.1",
     "pg-hstore": "2.3.3",
     "sequelize": "6.5.0"
