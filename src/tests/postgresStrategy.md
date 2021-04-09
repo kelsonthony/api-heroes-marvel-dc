@@ -2,7 +2,6 @@ const assert = require('assert')
 const Postgres = require('../db/strategies/postgres/postgres')
 const Context = require('../db/strategies/base/contextStrategy')
 
-
 const context = new Context(new Postgres())
 
 const MOCK_UP_HERO_CREATE = { 
@@ -15,22 +14,17 @@ const MOCK_HERO_UPDATE = {
     power: 'Money'
 }
 
-
-
-describe('Postgres Strategy DC Comics', function() {
+describe.only('Postgres Strategy DC Comics', function() {
     this.timeout(Infinity)
     this.beforeAll(async () => {
-    
-        await context.connect()    
+        await context.connect()
         await context.delete()
         await context.create(MOCK_HERO_UPDATE)
         
     })
     it('PostgresSQL Connection',  async function() {
         const result = await context.isConnected()
-        console.log('result to connection', result)
         assert.deepStrictEqual(result, true)
-        
     })
     it('Create a Hero', async function() {
         const result = await context.create(MOCK_UP_HERO_CREATE)

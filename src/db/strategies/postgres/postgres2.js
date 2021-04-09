@@ -1,4 +1,4 @@
-const Icrud = require('./../strategies/interfaces/interfaceCrud')
+const Icrud = require('./../interfaces/interfaceCrud')
 const Sequelize = require('sequelize')
 
 

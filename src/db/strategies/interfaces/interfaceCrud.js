@@ -22,6 +22,10 @@ class Icrud {
         throw new NotImplementedException()
     }
 
+    connect() {
+        throw new NotImplementedException()
+    }
+
     isConnected() {
         throw new NotImplementedException()
     }
