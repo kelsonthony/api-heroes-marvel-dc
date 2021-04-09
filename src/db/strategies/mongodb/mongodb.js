@@ -15,22 +15,6 @@ class MongoDB extends Icrud {
         this._connection = connection
     }
 
-    static connect() {
-        Mongoose.connect('mongodb://herouser:passwordwordheroes@192.168.1.19:27017/heroesdb', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }, function(error) {
-            if(!error) return;
-            console.log('Fail to Connection with MongoDB', error)
-        })
-
-        const connection = Mongoose.connection
-        this._connection = connection
-        connection.once('open', ()=> console.log('Connected to MongoDB and Running here'))
-        return connection
-
-    }
-
     async isConnected() {
         const state = STATUS[this._connection.readyState]
 
@@ -42,6 +26,24 @@ class MongoDB extends Icrud {
 
         return STATUS[this._connection.readyState]
     }
+
+    static connect() {
+        Mongoose.connect('mongodb://herouser:passwordwordheroes@localhost:27017/heroesdb', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }, function(error) {
+            if(!error) return;
+            console.log('Fail to Connection with MongoDB', error)
+        })
+
+        const connection = Mongoose.connection
+        this._connection = connection
+        connection.once('open', () => console.log('Connected to MongoDB and Running here'))
+        return connection
+
+    }
+
+    
 
     create(item) {
         return this._schema.create(item)

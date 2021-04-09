@@ -1,9 +1,8 @@
 const assert = require('assert')
 const Postgres = require('../db/strategies/postgres/postgres')
+const heroSchema = require('../db/strategies/postgres/schemas/heroSchema')
 const Context = require('../db/strategies/base/contextStrategy')
 
-
-const context = new Context(new Postgres())
 
 const MOCK_UP_HERO_CREATE = { 
     name: 'Aquaman',
@@ -16,12 +15,14 @@ const MOCK_HERO_UPDATE = {
 }
 
 
+let context = {}
 
 describe('Postgres Strategy DC Comics', function() {
     this.timeout(Infinity)
     this.beforeAll(async () => {
-    
-        await context.connect()    
+        const connection = await Postgres.connect()
+        const model = await Postgres.defineModel(connection, heroSchema)
+        context = new Context(new Postgres(connection, model))
         await context.delete()
         await context.create(MOCK_HERO_UPDATE)
         
