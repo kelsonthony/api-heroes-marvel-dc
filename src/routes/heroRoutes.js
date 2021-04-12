@@ -98,4 +98,50 @@ module.exports = class HeroRoutes extends BaseRoute {
         }       
     }
 
+    update() {
+        return {
+            path: '/heroesmarvel/{id}',
+            method: 'PATCH',
+            config: {
+                validate: {
+                    params: {
+                        id: Joi.string().required()
+                    },
+                    payload: {
+                        name: Joi.string().min(3).max(100),
+                        power: Joi.string().min(2).max(100)
+                    }
+                }
+            },
+            handler: async (request) => {
+                try {
+                    const { id } = request.params
+
+                    const { payload } = request
+
+                    const dataString = JSON.stringify(payload)
+
+                    const data = JSON.parse(dataString)
+
+                    const result = await this.db.update(id, data)
+
+                    console.log('result update???', result) //{ n: 1, nModified: 1, ok: 1 }
+
+                    if(result.nModified !== 1) return {
+                        message: 'Impossible update Hero'
+                    }
+
+                    return {
+                        message: 'Hero Updated'
+                    }
+                    
+
+                } catch (error) {
+                    console.log('Internal error to create', error)
+                    return 'Internal Error!'
+                }
+            }
+        }
+    }
+
 }

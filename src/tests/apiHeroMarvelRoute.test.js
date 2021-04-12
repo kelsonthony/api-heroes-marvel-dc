@@ -8,9 +8,21 @@ const MOCK_HERO_CREATE = {
     power: 'Arrow'
 }
 
+let MOCK_ID = ''
+
 describe('API Tests Heroes Marvel', function() {
     this.beforeAll( async() => {
         app = await api
+
+        const result = await app.inject({
+            method: 'POST',
+            url: '/heroesmarvel',
+            payload: JSON.stringify(MOCK_HERO_CREATE)
+        })
+
+        const data = JSON.parse(result.payload)
+        MOCK_ID = data._id
+
     })
 
     it('1) List Heroes from /heroesmarvel', async () => {
@@ -101,6 +113,32 @@ describe('API Tests Heroes Marvel', function() {
         const { message, _id } = JSON.parse(result.payload)
         assert.ok(statusCode === 200)
         assert.deepEqual(message, 'Success, Hero Created')
+
+    });
+
+    it.only('Update a Hero - /heroesmarvel/:id', async () => {
+        
+        const _id = MOCK_ID
+
+        const expected = {
+            power: 'Super arrow'
+        }
+
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `/heroesmarvel/${_id}`,
+            payload: JSON.stringify(expected)
+        })
+
+        console.log('result update', result.payload)
+
+        const statusCode = result.statusCode
+        
+        console.log('statusCode', statusCode)
+
+        const data = JSON.parse(result.payload)
+        assert.ok(statusCode === 200)
+        assert.deepStrictEqual(data.message, 'Hero Updated')
 
     });
 });
