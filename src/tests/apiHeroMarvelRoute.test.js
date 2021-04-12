@@ -3,7 +3,12 @@ const api = require('./../api')
 
 let app = {}
 
-describe.only('API Tests Heroes Marvel', function() {
+const MOCK_HERO_CREATE = {
+    name: 'Black Arrow',
+    power: 'Arrow'
+}
+
+describe('API Tests Heroes Marvel', function() {
     this.beforeAll( async() => {
         app = await api
     })
@@ -11,7 +16,7 @@ describe.only('API Tests Heroes Marvel', function() {
     it('1) List Heroes from /heroesmarvel', async () => {
         const result = await app.inject({
             method: 'GET',
-            url: '/heroesmarvel?skip=0&limit=20'
+            url: '/heroesmarvel?skip=0&limit=10'
         })
 
         const data = JSON.parse(result.payload)
@@ -26,7 +31,6 @@ describe.only('API Tests Heroes Marvel', function() {
 
     it('2) List only 4 Heroes from /heroesmarvel Route', async () => {
         const MAX_LIMIT = 4
-
         const result = await app.inject({
             method: 'GET',
             url: `/heroesmarvel?skip=0&limit=${MAX_LIMIT}`
@@ -50,28 +54,53 @@ describe.only('API Tests Heroes Marvel', function() {
             url: `/heroesmarvel?skip=0&limit=${MAX_LIMIT}`
         })
 
-        console.log('result.payload', result.payload)
+        const resultError = {"statusCode":400,"error":"Bad Request","message":"child \"limit\" fails because [\"limit\" must be a number]","validation":{"source":"query","keys":["limit"]}}
 
-        assert.deepStrictEqual(result.payload, 'Server internal Error :( !')
+        console.log('result.statusCode', result.statusCode)
+        console.log('result.payload', result.payload)     
+
+        assert.deepStrictEqual(result.statusCode, 400)
+        assert.deepStrictEqual(result.payload, JSON.stringify(resultError))
+        //assert.deepStrictEqual(result.payload, 'Server internal Error :( !')
     });
 
     it('4) List from Hero Route should be filter only 1 item', async () => {
-        const max_size = 1000
-        const name = 'Hulk-1617909201400'
+        const MAX_LIMIT = 10
+        const NAME = 'Hulk-1618249028298'
 
         const result = await app.inject({
             method: 'GET',
-            url: `/heroesmarvel?skip=0&limit=${max_size}&name=${name}`
+            url: `/heroesmarvel?skip=0&limit=${MAX_LIMIT}&name=${NAME}`
         })
 
         const data = JSON.parse(result.payload)
+        //const data = result.payload
+        console.log('my data results', data[0].name)
 
         const statusCode = result.statusCode
 
-        console.log('my data', data)
         console.log('statusCode', statusCode)
 
         assert.deepStrictEqual(statusCode, 200)
-        assert.ok(data[0].name === name)
+        assert.ok(data[0].name === NAME)
+    });
+
+    it('Create POST - /heroesmarvel', async () => {
+        
+        const result = await app.inject({
+            method: 'POST',
+            url: '/heroesmarvel',
+            payload: JSON.stringify(MOCK_HERO_CREATE)
+        })
+
+        const statusCode = result.statusCode
+
+        console.log('result statusCode', statusCode)
+        console.log('result payload', result.payload)
+
+        const { message, _id } = JSON.parse(result.payload)
+        assert.ok(statusCode === 200)
+        assert.deepEqual(message, 'Success, Hero Created')
+
     });
 });
