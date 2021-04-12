@@ -125,7 +125,7 @@ module.exports = class HeroRoutes extends BaseRoute {
 
                     const result = await this.db.update(id, data)
 
-                    console.log('result update???', result) //{ n: 1, nModified: 1, ok: 1 }
+                    //console.log('result update???', result) //{ n: 1, nModified: 1, ok: 1 }
 
                     if(result.nModified !== 1) return {
                         message: 'Impossible update Hero'
@@ -143,5 +143,7 @@ module.exports = class HeroRoutes extends BaseRoute {
             }
         }
     }
+
+    
 
 }

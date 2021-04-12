@@ -10,7 +10,7 @@ const MOCK_HERO_CREATE = {
 
 let MOCK_ID = ''
 
-describe('API Tests Heroes Marvel', function() {
+describe.only('API Tests Heroes Marvel', function() {
     this.beforeAll( async() => {
         app = await api
 
@@ -97,7 +97,7 @@ describe('API Tests Heroes Marvel', function() {
         assert.ok(data[0].name === NAME)
     });
 
-    it('Create POST - /heroesmarvel', async () => {
+    it('5) Create POST - /heroesmarvel', async () => {
         
         const result = await app.inject({
             method: 'POST',
@@ -107,16 +107,16 @@ describe('API Tests Heroes Marvel', function() {
 
         const statusCode = result.statusCode
 
-        console.log('result statusCode', statusCode)
-        console.log('result payload', result.payload)
+        // console.log('result statusCode', statusCode)
+        // console.log('result payload', result.payload)
 
         const { message, _id } = JSON.parse(result.payload)
         assert.ok(statusCode === 200)
-        assert.deepEqual(message, 'Success, Hero Created')
+        assert.deepStrictEqual(message, 'Success, Hero Created')
 
     });
 
-    it.only('Update a Hero - /heroesmarvel/:id', async () => {
+    it('6) Update a Hero - /heroesmarvel/:id', async () => {
         
         const _id = MOCK_ID
 
@@ -141,4 +141,52 @@ describe('API Tests Heroes Marvel', function() {
         assert.deepStrictEqual(data.message, 'Hero Updated')
 
     });
+
+    it('7) Update PATCH /heroesmarvel/:id it should NOT update a specific ID', async () => {
+        const _id = '6074a697fee77a589dad6f69'
+
+        const dataUpdate = {
+            power: 'Super Shield'
+        }
+
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `/heroesmarvel/${_id}`,
+            payload: JSON.stringify(dataUpdate)
+        })
+
+        const statusCode = result.statusCode
+        const data = JSON.parse(result.payload)
+
+        //console.log('result to Update', result)
+        // console.log('statusCode', statusCode)
+        //console.log('data to Update', data)
+
+        const expected = {
+            // statusCode: 412,
+            // error: 'Precondition Failed',
+            message: 'Impossible update Hero'
+        }
+        //assert.ok(statusCode === 412)
+        assert.deepStrictEqual(data, expected)
+
+    });
+
+    // it('8) Delete a Hero by ID', async () => {
+    //     const _id = MOCK_ID
+
+    //     const result = await app.inject({
+    //         method: 'DELETE',
+    //         url: `/heroesmarvel/${_id}`
+    //     })
+
+    //     const statusCode = result.statusCode
+
+    //     const data = JSON.parse(result.payload)
+
+    //     assert.ok(statusCode === 200)
+    //     assert.deepStrictEqual(data.message, 'Hero Deleted')
+
+    // });
+
 });
