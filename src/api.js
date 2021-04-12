@@ -26,7 +26,7 @@ async function main() {
     ])
 
     await app.start()
-    console.log('Server rodando na porta', app.info.port)
+    console.log('Server Running on port ', app.info.port)
 
     return app
 
