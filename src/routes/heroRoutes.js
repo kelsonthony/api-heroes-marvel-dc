@@ -1,5 +1,6 @@
 const BaseRoute = require('./base/baseRoute')
 const Joi = require('joi')
+const Boom = require('boom')
 
 
 const failAction = (request, headers, erro) => {
@@ -17,6 +18,9 @@ module.exports = class HeroRoutes extends BaseRoute {
             path: '/heroesmarvel',
             method: 'GET',
             config: {
+                tags: ['api'],
+                description: 'Get result list',
+                notes: 'Should return a result list',
                 validate: {
                     failAction,
                     query: {
@@ -62,7 +66,8 @@ module.exports = class HeroRoutes extends BaseRoute {
                 
                 } catch (error) {
                     console.log('Error on Route to List', error)
-                    return 'Server internal Error :( !'
+                    //return 'Server internal Error :( !'
+                    return Boom.internal()
                 }
             }
         }
@@ -73,6 +78,9 @@ module.exports = class HeroRoutes extends BaseRoute {
             path: '/heroesmarvel',
             method: 'POST',
             config: {
+                tags: ['api'],
+                description: 'POST should create a Hero',
+                notes: 'Should create a Hero here',
                 validate: {
                     failAction,
                     payload: {
@@ -86,13 +94,16 @@ module.exports = class HeroRoutes extends BaseRoute {
                     const { name, power } = request.payload
                     const result = await this.db.create({name, power})
 
+                    console.log('result to create', result)
+
+
                     return {
                         message: 'Success, Hero Created',
                         _id: result._id
                     }
                 } catch (error) {
                     console.log('Internal Error', error)
-                    return 'Internal Error :('
+                    return Boom.internal()
                 }
             }
         }       
@@ -103,6 +114,9 @@ module.exports = class HeroRoutes extends BaseRoute {
             path: '/heroesmarvel/{id}',
             method: 'PATCH',
             config: {
+                tags: ['api'],
+                description: 'PATCH should update a Hero',
+                notes: 'Should update a Hero here',
                 validate: {
                     params: {
                         id: Joi.string().required()
@@ -127,9 +141,9 @@ module.exports = class HeroRoutes extends BaseRoute {
 
                     //console.log('result update???', result) //{ n: 1, nModified: 1, ok: 1 }
 
-                    if(result.nModified !== 1) return {
-                        message: 'Impossible update Hero'
-                    }
+                    if(result.nModified !== 1) 
+                        return Boom.preconditionFailed('Impossible update Hero')
+                    
 
                     return {
                         message: 'Hero Updated'
@@ -138,12 +152,46 @@ module.exports = class HeroRoutes extends BaseRoute {
 
                 } catch (error) {
                     console.log('Internal error to create', error)
-                    return 'Internal Error!'
+                    return Boom.internal()
                 }
             }
         }
     }
 
-    
+    delete() {
+        return {
+            path: '/heroesmarvel/{id}',
+            method: 'DELETE',
+            config: {
+                tags: ['api'],
+                description: 'DELETE should delete a Hero',
+                notes: 'Should delete a Hero here',
+                validate: {
+                    failAction,
+                    params: {
+                        id: Joi.string().required()
+                    }
+                }
+            },
+            handler: async (request) => {
+                try {
+                    const { id } = request.params
+                    const result = await this.db.delete(id)
+
+                    console.log('Delete Result: ', result) //{ n: 1, ok: 1, deletedCount: 1 }
+
+                    if(result.n !== 1)
+                        return Boom.preconditionFailed('ID Not Found')
+                    return {
+                        message: 'Hero Deleted'
+                    }
+
+                } catch (error) {
+                    console.log('Error to Delete method', error)
+                    return Boom.internal()
+                }
+            }
+        }
+    }
 
 }

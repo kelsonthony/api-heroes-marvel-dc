@@ -80,3 +80,24 @@ Password: passwordpostgres
 
 ### Setup dev ###
 
+"boom": "^7.3.0",
+    "hapi": "^17.0.0",
+    "hapi-swagger": "^9.1.3",
+    "inert": "^5.1.3",
+    "joi": "^17.4.0",
+    "mongoose": "5.11.15",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.6.2",
+    "vision": "^5.4.4"
+
+
+    npm i hapi@18.1.0 hapi-swagger@9.4.2
+
+
+    "nyc": "^15.1.0"
+
+     "test": "nyc --reporter=html mocha --timeout 10000 src/tests/*.js",
+
+
+     https://github.com/glennjones/hapi-swagger

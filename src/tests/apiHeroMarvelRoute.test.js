@@ -1,5 +1,6 @@
 const assert = require('assert')
-const api = require('./../api')
+const { stat } = require('fs')
+const api = require('../api')
 
 let app = {}
 
@@ -10,7 +11,7 @@ const MOCK_HERO_CREATE = {
 
 let MOCK_ID = ''
 
-describe.only('API Tests Heroes Marvel', function() {
+describe('API Tests Heroes Marvel', function() {
     this.beforeAll( async() => {
         app = await api
 
@@ -78,7 +79,7 @@ describe.only('API Tests Heroes Marvel', function() {
 
     it('4) List from Hero Route should be filter only 1 item', async () => {
         const MAX_LIMIT = 10
-        const NAME = 'Hulk-1618249028298'
+        const NAME = 'Hulk-1618249087353'
 
         const result = await app.inject({
             method: 'GET',
@@ -107,8 +108,8 @@ describe.only('API Tests Heroes Marvel', function() {
 
         const statusCode = result.statusCode
 
-        // console.log('result statusCode', statusCode)
-        // console.log('result payload', result.payload)
+        console.log('result statusCode', statusCode)
+        console.log('result payload', result.payload)
 
         const { message, _id } = JSON.parse(result.payload)
         assert.ok(statusCode === 200)
@@ -163,30 +164,58 @@ describe.only('API Tests Heroes Marvel', function() {
         //console.log('data to Update', data)
 
         const expected = {
-            // statusCode: 412,
-            // error: 'Precondition Failed',
-            message: 'Impossible update Hero'
+            error: 'Precondition Failed',
+            message: 'Impossible update Hero',
+            statusCode: 412,
         }
-        //assert.ok(statusCode === 412)
+
+        console.log('expected', expected)
+        console.log('statusCode', statusCode)
+        assert.ok(statusCode === 412)
         assert.deepStrictEqual(data, expected)
 
     });
 
-    // it('8) Delete a Hero by ID', async () => {
-    //     const _id = MOCK_ID
+    it('8) Delete a Hero by ID', async () => {
+        const _id = MOCK_ID
 
-    //     const result = await app.inject({
-    //         method: 'DELETE',
-    //         url: `/heroesmarvel/${_id}`
-    //     })
+        const result = await app.inject({
+            method: 'DELETE',
+            url: `/heroesmarvel/${_id}`
+        })
 
-    //     const statusCode = result.statusCode
+        const statusCode = result.statusCode
 
-    //     const data = JSON.parse(result.payload)
+        const data = JSON.parse(result.payload)
 
-    //     assert.ok(statusCode === 200)
-    //     assert.deepStrictEqual(data.message, 'Hero Deleted')
+        assert.ok(statusCode === 200)
+        assert.deepStrictEqual(data.message, 'Hero Deleted')
 
-    // });
+    });
+
+    it('It is Not Possible delete a Hero invalid', async () => {
+        const _id = 'ID_NOT_VALID'
+
+        const result = await app.inject({
+            method: 'DELETE',
+            url: `/heroesmarvel/${_id}`
+        })
+
+        const statusCode = result.statusCode
+
+        const data = JSON.parse(result.payload)
+
+        console.log('Not Delete ID', data)
+        console.log('statusCode', statusCode)
+
+        const expected = {
+            statusCode: 412,
+            error: 'Precondition Failed',
+            message: 'ID Not Found'
+        }
+
+        assert.ok(statusCode === 412)
+        assert.deepStrictEqual(data, expected)
+    });
 
 });
