@@ -57,10 +57,13 @@ class Postgres extends Icrud {
         return dataValues
     }
 
-    async read(item = {}) {
-        const result = await this._schema.findAll({where: item, raw: true})
+    // async read(item = {}) {
+    //     const result = await this._schema.findAll({where: item, raw: true})
         
-        return result;
+    //     return result;
+    // }
+    read(item, skip = 0, limit = 10) {
+        return this._schema.find(item).skip(skip).limit(limit)
     }
     async update(id, item) {
         console.log('item: ', item)

@@ -3,7 +3,10 @@ const Hapi = require('hapi')
 const Context = require('./db/strategies/base/contextStrategy')
 const MongoDb = require('./db/strategies/mongodb/mongodb')
 const heroSchema = require('./db/strategies/mongodb/schemas/heroSchemaMongo')
+const PostgresDb = require('./db/strategies/postgres/postgres')
+const heroSchemaDC = require('./db/strategies/postgres/schemas/heroSchema')
 const HeroRoute = require('./routes/heroRoutes')
+const HeroRouteDC = require('./routes/heroRoutesDC')
 const HapiSwagger = require('hapi-swagger')
 const Vision = require('vision')
 const Inert = require('inert')
@@ -23,6 +26,9 @@ async function main() {
 
     const connection = MongoDb.connect()
     const context = new Context(new MongoDb(connection, heroSchema))
+
+    const connectionDC = PostgresDb.connect()
+    const contextDC = new Context(new PostgresDb(connectionDC, heroSchemaDC))
 
     //console.log('MapRoutes', mapRoutes(new HeroRoute(context), HeroRoute.methods()))
     const swaggerOptions = {
@@ -45,6 +51,7 @@ async function main() {
 
     app.route([
         ...mapRoutes(new HeroRoute(context), HeroRoute.methods()),
+        ...mapRoutes(new HeroRouteDC(contextDC), HeroRouteDC.methods()),
         ...mapRoutes(new UtilRoutes(), UtilRoutes.methods())
     ])
 
